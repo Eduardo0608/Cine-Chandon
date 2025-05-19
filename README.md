@@ -209,7 +209,6 @@ INSERT INTO conta (nome, email, senha, cpf, data_nascimento) VALUES
 ('João Silva',      'joao.silva@gmail.com',      '$2y$10$SoXEqMvda/A1pVyQHqXvQO42ICSBsXjq.BGz6fAz8Gm89NxXlJ93S', '529.982.247-25', '1990-01-15'),
 ('Maria Souza',     'maria.souza@gmail.com',     '$2y$10$A1eYpMvxa/91XzQvRvYpAQ42JDNTAXkp.CDZ6uAl2Em67AxToK32D', '762.807.785-73', '1985-07-23');
 
-
 -- Inserindo dados na tabela compra
 INSERT INTO compra (id_conta, id_sessao, quantidade_ingressos) VALUES
 (1, 1, 2),
