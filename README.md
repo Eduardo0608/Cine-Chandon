@@ -130,7 +130,6 @@ CREATE TABLE compra (
     FOREIGN KEY (id_sessao) REFERENCES sessao(id_sessao) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Inserindo dados nas tabelas
 -- Inserindo dados na tabela filme
 INSERT INTO filme (titulo, duracao, sinopse, data_lancamento) VALUES
 ('Vingadores: Ultimato', 181, 'Os Vingadores enfrentam Thanos.', '2019-04-26'),
@@ -182,7 +181,6 @@ INSERT INTO sessao (id_filme, horario, quantidade_maxima_ingressos) VALUES
 
 ALTER TABLE sessao ADD COLUMN ingressos_disponiveis INT NOT NULL;
 
--- Atualizando as sessões existentes para que ingressos_disponiveis seja igual a quantidade_maxima_ingressos
 UPDATE sessao SET ingressos_disponiveis = 48
 WHERE id_filme = 1;
 UPDATE sessao SET ingressos_disponiveis = 44
@@ -249,26 +247,20 @@ BEGIN
     DECLARE genero_count INT;
     DECLARE filme_id INT;
 
-    -- Iniciando a transação
     START TRANSACTION;
 
-    -- Inserindo o filme
     INSERT INTO filme (titulo, duracao, sinopse, data_lancamento)
     VALUES (titulo, duracao, sinopse, data_lancamento);
 
-    -- Pegando o id do filme recém inserido
     SET filme_id = LAST_INSERT_ID();
 
-    -- Contando o número de gêneros no JSON
     SET genero_count = JSON_LENGTH(generos);
 
-    -- Validação: impedir cadastro sem nenhum gênero
     IF genero_count = 0 THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Pelo menos um gênero deve ser informado para cadastrar o filme';
     END IF;
 
-    -- Loop para associar gêneros
     WHILE i < genero_count DO
         SET genero_id = JSON_UNQUOTE(JSON_EXTRACT(generos, CONCAT('$[', i, ']')));
 
@@ -311,7 +303,6 @@ BEGIN
 
     SET genero_count = JSON_LENGTH(generos);
 
-    -- Validação: impedir atualização sem nenhum gênero
     IF genero_count = 0 THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Pelo menos um gênero deve ser informado para atualizar o filme';
@@ -335,16 +326,13 @@ DELIMITER ;
 DELIMITER //
 CREATE OR REPLACE PROCEDURE ExcluirFilme(IN filme_id INT)
 BEGIN
-    -- Iniciando a transação
+
     START TRANSACTION;
 
-    -- Excluindo o filme
     DELETE FROM filme WHERE id_filme = filme_id;
 
-    -- Excluindo as associações do filme com seus gêneros
     DELETE FROM filme_genero WHERE id_filme = filme_id;
 
-    -- Commit da transação
     COMMIT;
 END//
 DELIMITER ;
@@ -360,29 +348,22 @@ CREATE OR REPLACE PROCEDURE RealizarCompra(
 BEGIN
     DECLARE ingressos_restantes INT;
 
-    -- Início da transação
     START TRANSACTION;
 
-    -- Verificando a quantidade de ingressos disponíveis na sessão
     SELECT ingressos_disponiveis INTO ingressos_restantes
     FROM sessao
     WHERE id_sessao = sessao_id;
 
-    -- Verificando se há ingressos suficientes disponíveis
     IF ingressos_restantes >= quantidade_ingressos THEN
-        -- Atualizando a quantidade de ingressos disponíveis
         UPDATE sessao
         SET ingressos_disponiveis = ingressos_disponiveis - quantidade_ingressos
         WHERE id_sessao = sessao_id;
 
-        -- Inserindo a compra
         INSERT INTO compra (id_conta, id_sessao, quantidade_ingressos)
         VALUES (conta_id, sessao_id, quantidade_ingressos);
 
-        -- Commit da transação
         COMMIT;
     ELSE
-        -- Rollback se não houver ingressos suficientes
         ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ingressos insuficientes para completar a compra';
     END IF;
@@ -402,39 +383,30 @@ BEGIN
     DECLARE ingressos_restantes INT;
     DECLARE sessao_id INT;
 
-    -- Início da transação
     START TRANSACTION;
 
-    -- Verificando a quantidade atual de ingressos e a sessão relacionada
     SELECT quantidade_ingressos, id_sessao INTO quantidade_atual, sessao_id
     FROM compra
     WHERE id_compra = compra_id;
 
-    -- Verificando a quantidade de ingressos disponíveis na sessão
     SELECT ingressos_disponiveis INTO ingressos_restantes
     FROM sessao
     WHERE id_sessao = sessao_id;
 
-    -- Verificando se a quantidade de ingressos desejada é maior do que os ingressos disponíveis
     IF nova_quantidade_ingressos > ingressos_restantes THEN
-        -- Rollback se o número de ingressos solicitados for maior do que os disponíveis na sessão
         ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ingressos insuficientes para completar a alteração da compra';
     ELSE
-        -- Calculando a diferença de ingressos
         SET quantidade_diferenca = nova_quantidade_ingressos - quantidade_atual;
 
-        -- Atualizando a quantidade de ingressos disponíveis na sessão
         UPDATE sessao
         SET ingressos_disponiveis = ingressos_disponiveis - quantidade_diferenca
         WHERE id_sessao = sessao_id;
 
-        -- Atualizando a compra
         UPDATE compra
         SET quantidade_ingressos = nova_quantidade_ingressos
         WHERE id_compra = compra_id;
 
-        -- Commit da transação
         COMMIT;
     END IF;
 
@@ -449,14 +421,11 @@ CREATE OR REPLACE PROCEDURE CriarSessao(
     IN nova_quantidade_maxima_ingressos INT
 )
 BEGIN
-    -- Início da transação
     START TRANSACTION;
 
-    -- Inserir a nova sessão
     INSERT INTO sessao (id_sessao, quantidade_maxima_ingressos, ingressos_disponiveis)
     VALUES (nova_sessao_id, nova_quantidade_maxima_ingressos, nova_quantidade_maxima_ingressos);
 
-    -- Commit da transação
     COMMIT;
 END//
 DELIMITER ;
@@ -472,7 +441,6 @@ CREATE OR REPLACE PROCEDURE AtualizarSessao(
 BEGIN
     DECLARE ingressos_disponiveis_atual INT;
 
-    -- Verifica o valor atual para garantir integridade
     SELECT ingressos_disponiveis INTO ingressos_disponiveis_atual
     FROM sessao
     WHERE id_sessao = p_id_sessao;
@@ -496,18 +464,15 @@ CREATE OR REPLACE PROCEDURE ExcluirGenero(IN p_id_genero INT)
 BEGIN
     DECLARE genero_em_uso INT;
 
-    -- Verifica se há vínculos com filmes
     SELECT COUNT(*) INTO genero_em_uso
     FROM filme_genero
     WHERE id_genero = p_id_genero;
 
-    -- Se houver vínculos, lança erro controlado
     IF genero_em_uso > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Este gênero está associado a um ou mais filmes e não pode ser excluído.';
     END IF;
 
-    -- Se não houver, pode excluir normalmente
     DELETE FROM genero WHERE id_genero = p_id_genero;
 END//
 DELIMITER ;
