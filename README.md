@@ -338,7 +338,6 @@ END//
 DELIMITER ;
 
 -- Procedure que realiza a compra e faz a atualização dos ingressos disponíveis na sessão
-
 DELIMITER //
 CREATE OR REPLACE PROCEDURE RealizarCompra(
     IN conta_id INT,
@@ -371,7 +370,6 @@ END//
 DELIMITER ;
 
 -- Procedure que edita a compra e faz a atualização dos ingressos disponíveis na sessão
-
 DELIMITER //
 CREATE OR REPLACE PROCEDURE AtualizarCompra(
     IN compra_id INT,
@@ -414,7 +412,6 @@ END//
 DELIMITER ;
 
 -- Procedure para criar sessão
-
 DELIMITER //
 CREATE OR REPLACE PROCEDURE CriarSessao(
     IN nova_sessao_id INT,
