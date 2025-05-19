@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Filmes</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="icon" href="assets/images/favicon.png" type="image/x-icon"/>
+</head>
+<body>
+  <header id="header" class="mb-4">
+    <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+    <nav class="navbar">
+      <ul class="nav-links"></ul>
+    </nav>
+  </header>
+
+  <main class="container my-5">
+    <h1 class="text-center">Filmes</h1>
+
+    <div class="d-flex justify-content-center mb-4">
+      <button id="btnCadastrar" class="btn btn-success mr-2" style="display: none;">
+        Cadastrar Filme
+      </button>
+    </div>
+
+    <div id="listaFilmes" class="mt-5" style="display: none;">
+      <div class="table-responsive">
+        <table class="table table-striped mt-3 text-center">
+          <thead>
+            <tr>
+              <th class="text-nowrap">Título</th>
+              <th class="text-nowrap">Sinopse</th>
+              <th class="text-nowrap">Lançamento</th>
+              <th class="text-nowrap">Duração</th>
+              <th class="text-nowrap">Data de Cadastro</th>
+              <th class="col-acao text-nowrap" style="display: none;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- INFOS AQUI (o CSS já alinha e impede quebra) -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+        <form id="formCadastrar" style="display: none;" class="mt-5">
+            <h2>Cadastrar Filme</h2>
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="duracao">Duração (minutos):</label>
+                <input type="number" id="duracao" name="duracao" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="sinopse">Sinopse:</label>
+                <textarea id="sinopse" name="sinopse" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="data_lancamento">Data de Lançamento:</label>
+                <input type="date" id="data_lancamento" name="data_lancamento" class="form-control" required>
+            </div>
+            <p>Gêneros:</p>
+            <div id="checkboxGeneros" class="form-group">
+                <!-- INFOS AQUI -->
+            </div>
+            <button type="submit" class="btn btn-success">Cadastrar</button>
+            <button type="button" id="btnCancelarCadastro" class="btn btn-secondary">Cancelar</button>
+        </form>
+
+        <form id="formEditarFilme" style="display: none;" class="mt-5">
+            <h2>Editar Filme</h2>
+            <p>ID do Filme: <span id="editId"></span></p>
+            <div class="form-group">
+                <label for="editTitulo">Título:</label>
+                <input type="text" id="editTitulo" name="titulo" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editDuracao">Duração (minutos):</label>
+                <input type="number" id="editDuracao" name="duracao" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editSinopse">Sinopse:</label>
+                <textarea id="editSinopse" name="sinopse" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editDataLancamento">Data de Lançamento:</label>
+                <input type="date" id="editDataLancamento" name="data_lancamento" class="form-control" required>
+            </div>
+            <p>Gêneros:</p>
+            <div id="checkboxGenerosEditar" class="form-group">
+                <!-- INFOS AQUI -->
+            </div>
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            <button type="button" id="btnCancelarEdicao" class="btn btn-secondary">Cancelar</button>
+        </form>
+    </main>
+
+    <footer id="footer" class="text-center mt-4">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+    <script src="js/sessionManager.js"></script>
+    <script src="js/scriptFilme.js"></script>
+</body>
+</html>

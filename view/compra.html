@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compras</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="icon" href="assets/images/favicon.png" type="image/x-icon"/>
+</head>
+<body>
+  <header id="header" class="mb-4">
+    <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+    <nav class="navbar">
+      <ul class="nav-links">
+        <li><a href="filme.html" class="nav-link">Filmes</a></li>
+        <li><a href="sessao.html" class="nav-link">Sessões</a></li>
+        <li><a href="genero.html" class="nav-link">Gêneros</a></li>
+        <li><a href="compra.html" class="nav-link">Compras</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container my-5">
+    <h1 class="text-center">Compras</h1>
+    <div class="d-flex justify-content-center mb-4">
+      <button id="btnCadastrarCompra" class="btn btn-success mr-2">
+        Cadastrar Compra
+      </button>
+    </div>
+
+    <div id="listaCompras" class="mt-5" style="display: none;">
+      <div class="table-responsive">
+        <table class="table table-striped mt-3 text-center">
+          <thead>
+            <tr>
+              <th class="text-nowrap">Filme</th>
+              <th class="text-nowrap">Horário</th>
+              <th class="text-nowrap">Quantidade de Ingressos</th>
+              <th class="text-nowrap">Data da Compra</th>
+              <th class="col-acao-compra text-nowrap" style="display: none;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- INFOS EXIBIDAS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+        <form id="formCadastrar" style="display: none;" class="mt-5">
+            <h2>Cadastrar Compra</h2>
+            <div class="form-group">
+                <label for="idConta">Responsável:</label>
+                <select id="idConta" name="id_conta" class="form-control" required>
+                    <option value="">Selecione uma conta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="idSessao">Sessão:</label>
+                <select id="idSessao" name="nome_sessao" class="form-control" required>
+                    <option value="">Selecione uma sessão</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="horarioSelect">Horário:</label>
+                <select id="horarioSelect" name="id_sessao" class="form-control" required>
+                    <option value="">Selecione um horário</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantidadeIngressos">Quantidade de Ingressos:</label>
+                <input type="number" id="quantidadeIngressos" name="quantidade_ingressos" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Cadastrar</button>
+            <button type="button" id="btnCancelarCadastro" class="btn btn-secondary">Cancelar</button>
+        </form>
+        
+        <form id="formEditarCompra" style="display: none;" class="mt-5">
+    <h2>Editar Compra</h2>
+    <input type="hidden" id="editId" name="id_compra">
+
+    <div class="form-group">
+        <label for="editIdConta">Responsável:</label>
+        <select id="editIdConta" name="id_conta" class="form-control" required>
+            <option value="">Selecione uma conta</option>
+            <option value="null">Conta Removida</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="editIdSessao">Sessão:</label>
+        <select id="editIdSessao" name="nome_sessao" class="form-control" required>
+            <option value="">Selecione uma sessão</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="editHorarioSelect">Horário:</label>
+        <select id="editHorarioSelect" name="id_sessao" class="form-control" required>
+            <option value="">Selecione um horário</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="editQuantidadeIngressos">Quantidade de Ingressos:</label>
+        <input type="number" id="editQuantidadeIngressos" name="quantidade_ingressos" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+    <button type="button" id="btnCancelarEdicao" class="btn btn-secondary">Cancelar</button>
+</form>
+    
+    </main>
+
+    <footer id="footer">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+    <script src="js/scriptCompra.js"></script>
+    <script src="js/sessionManager.js"></script>
+</body>
+</html>

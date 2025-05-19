@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gêneros</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="icon" href="assets/images/favicon.png" type="image/x-icon"/>
+</head>
+<body>  
+  <header id="header" class="mb-4">
+    <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+    <nav class="navbar">
+      <ul class="nav-links"></ul>
+    </nav>
+  </header>
+
+  <main class="container my-5">
+    <h1 class="text-center">Gêneros</h1>
+
+    <div class="d-flex justify-content-center mb-4">
+      <button id="btnCadastrar" class="btn btn-success mr-2" style="display: none;">
+        Cadastrar Gênero
+      </button>
+    </div>
+
+    <div id="listaGeneros" class="mt-5">
+      <div class="table-responsive">
+        <table class="table table-striped mt-3 text-center">
+          <thead>
+            <tr>
+              <th class="text-nowrap">Descrição</th>
+              <th class="text-nowrap">Data de Cadastro</th>
+              <th class="col-acao text-nowrap" style="display: none;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- INFOS EXIBIDAS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+        <form id="formCadastrar" class="mt-4" style="display: none;">
+            <h2>Cadastrar Gênero</h2>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Cadastrar</button>
+            <button type="button" id="btnCancelarCadastro" class="btn btn-secondary">Cancelar</button>
+        </form>
+
+        <form id="formEditarGenero" class="mt-4" style="display: none;">
+            <h2>Editar Gênero</h2>
+            <div class="form-group">
+                <label>ID do Gênero: <span id="editId"></span></label>
+                <input type="text" id="editNome" name="nome" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            <button type="button" id="btnCancelarEdicao" class="btn btn-secondary">Cancelar</button>
+        </form>
+    </main>
+
+    <footer id="footer">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+
+    <script src="js/sessionManager.js"></script>
+    <script src="js/scriptGeneros.js"></script>
+</body>
+</html>

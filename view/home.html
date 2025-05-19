@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cine Chandon</title>
+
+    <!-- Bootstrap e CSS custom -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <header id="header" class="mb-4">
+        <a href="home.html" class="logo">Cine Chandon</a>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="filme.html" class="nav-link">Filmes</a></li>
+                <li><a href="sessao.html" class="nav-link">Sessões</a></li>
+                <li><a href="genero.html" class="nav-link">Gêneros</a></li>
+                <li><a href="compra.html" class="nav-link">Compras</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container my-4">
+        <div class="text-center mb-4">
+            <h1>Bem-vindo ao Cine Chandon</h1>
+            <p>
+                Gerencie sessões, filmes e vendas com o Cine Chandon, o sistema que simplifica a operação de bilheterias.
+                Acesse a programação completa <a href="sessao.html">aqui</a>.
+            </p>
+        </div>
+
+        <!-- onde os cards das sessões vão aparecer -->
+        <div class="row" id="movies-container">
+            <!-- cards gerados por JS -->
+        </div>
+    </main>
+
+    <footer id="footer" class="text-center py-3">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- controle de sessão de usuário (já existente) -->
+    <script src="js/sessionManager.js"></script>
+    <!-- nosso script de listagem e redirecionamento -->
+    <script src="js/scriptHome.js"></script>
+</body>
+</html>

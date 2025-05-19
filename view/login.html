@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazer Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <header id="header" class="mb-4">
+        <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="/pasta/webservice/view/filme.html" class="nav-link">Filmes</a></li>
+                <li><a href="/pasta/webservice/view/sessao.html" class="nav-link">Sessões</a></li>
+                <li><a href="/pasta/webservice/view/genero.html" class="nav-link">Gêneros</a></li>
+                <li><a href="/pasta/webservice/view/compra.html" class="nav-link">Compras</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Fazer Login</h3>
+                        <form id="form-login-conta">
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="text" id="email" class="form-control" placeholder="Digite seu e-mail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="senha">Senha</label>
+                                <input type="password" id="senha" class="form-control" placeholder="Digite sua senha" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>Não tem uma conta? <a href="/pasta/webservice/view/conta.html">Cadastre-se</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+
+    <script src="js/scriptLogin.js"></script>
+    <script src="js/sessionManager.js"></script>
+</body>
+</html>

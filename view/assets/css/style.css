@@ -1,0 +1,247 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+:root {
+  --primary-color: #880d0d;
+  --secondary-color: #121111;
+  --white: #f0f0f0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: var(--secondary-color);
+  color: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  background-color: var(--primary-color);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  margin: 0;
+  font-size: 2em;
+  color: var(--white);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: var(--secondary-color);
+  text-decoration: none; 
+}
+
+.navbar {
+  display: flex;
+}
+
+.nav-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+.nav-link {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.card {
+  border-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-bottom: 2px solid var(--secondary-color);
+}
+
+.card-body {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.card-text {
+  font-size: 1em;
+  flex: 1;
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+#footer {
+  background-color: var(--primary-color);
+  color: var(--white);
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+#footer p {
+  margin: 0;
+}
+
+.session-card {
+  border-color: var(--white);
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.session-card-img-top {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-bottom: 2px solid var(--secondary-color);
+}
+
+.session-card-body {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.session-card-title {
+  font-size: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.session-card p {
+  font-size: 1em;
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+#listaContas table  {
+  color: var(--white); 
+  background-color: var(--primary-color);
+}
+
+#listaContas table tbody tr td {
+  color: var(--white);
+  background-color: var(--secondary-color);
+}
+
+#listaSessoes table  {
+  color: var(--white); 
+  background-color: var(--primary-color);
+}
+
+#listaSessoes table tbody tr td {
+  color: var(--white);
+  background-color: var(--secondary-color);
+}
+
+#listaFilmes table  {
+  color: var(--white); 
+  background-color: var(--primary-color);
+}
+
+#listaFilmes table tbody tr td {
+  color: var(--white);
+  background-color: var(--secondary-color);
+}
+
+#listaGeneros table  {
+  color: var(--white); 
+  background-color: var(--primary-color);
+}
+
+#listaGeneros table tbody tr td {
+  color: var(--white);
+  background-color: var(--secondary-color);
+}
+
+#listaCompras table  {
+  color: var(--white); 
+  background-color: var(--primary-color);
+}
+
+#listaCompras table tbody tr td {
+  color: var(--white);
+  background-color: var(--secondary-color);
+}
+
+.table thead th,
+.table tbody td {
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+.table-actions .btn {
+  display: inline-block;
+  margin: 0 0.25rem;
+}
+
+/* -------------------------------------------------------------------------------- */
+/* Override para que o footer NÃO fique “congelado” no viewport, mas sim ao final do conteúdo */
+/* -------------------------------------------------------------------------------- */
+footer {
+  position: static !important;
+  bottom: auto !important;
+  width: auto !important;
+}
+
+/* Se você quiser garantir que o footer apenas apareça após todo o conteúdo,
+   mesmo em páginas curtas, use esta estrutura flex no body: */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1; /* empurra o footer para o fim da página */
+}

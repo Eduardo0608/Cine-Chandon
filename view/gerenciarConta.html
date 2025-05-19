@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Contas</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <header id="header" class="mb-4">
+        <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="/pasta/webservice/view/filme.html" class="nav-link">Filmes</a></li>
+                <li><a href="/pasta/webservice/view/sessao.html" class="nav-link">Sessões</a></li>
+                <li><a href="/pasta/webservice/view/genero.html" class="nav-link">Gêneros</a></li>
+                <li><a href="/pasta/webservice/view/compra.html" class="nav-link">Compras</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <h2 class="text-center">Gerenciar Contas</h2>
+        
+        <div id="listaContas" class="mt-5" style="display: none;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>CPF</th>
+                        <th>Data de Cadastro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="formEditarConta" style="display: none;">
+            <h3>Editar Conta</h3>
+            <form id="form-edit-conta">
+                <input type="hidden" id="editId">
+                <div class="mb-3">
+                    <label for="editNome" class="form-label">Nome</label>
+                    <input type="text" id="editNome" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="editEmail" class="form-label">Email</label>
+                    <input type="email" id="editEmail" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="editCpf" class="form-label">CPF</label>
+                    <input type="text" id="editCpf" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNascimento">Data de nascimento</label>
+                    <input type="date" id="editNascimento" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Atualizar</button>
+                <button type="button" id="btnCancelar" class="btn btn-secondary">Cancelar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+
+    <script src="js/scriptGerenciarConta.js"></script>
+    <script src="js/sessionManager.js"></script>
+    <script>
+      // máscara de CPF no formato xxx.xxx.xxx-xx
+      function maskCPF(value) {
+        value = value.replace(/\D/g, "").slice(0, 11);
+        value = value.replace(/^(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
+        value = value.replace(/\.(\d{3})(\d)/, ".$1-$2");
+        return value;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const editCpf = document.getElementById("editCpf");
+        if (editCpf) {
+          editCpf.addEventListener("input", e => {
+            e.target.value = maskCPF(e.target.value);
+          });
+        }
+      });
+    </script>
+</body>
+</html>

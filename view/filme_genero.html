@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes e Gêneros</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <header id="header" class="mb-4">
+        <a href="/pasta/webservice/view/home.html" class="logo">Cine Chandon</a>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="/pasta/webservice/view/filme.html" class="nav-link">Filmes</a></li>
+                <li><a href="/pasta/webservice/view/sessao.html" class="nav-link">Sessões</a></li>
+                <li><a href="/pasta/webservice/view/genero.html" class="nav-link">Gêneros</a></li>
+                <li><a href="/pasta/webservice/view/compra.html" class="nav-link">Compras</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <h1 class="text-center">Relacionamentos entre Filmes e Gêneros</h1>
+
+        <div id="listaFilmes" class="mt-5" style="display: none;">
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Nome do Gênero</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- INFOS EXIBIDAS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+    </footer>
+    
+    <script src="js/scriptFilmeGenero.js"></script>
+    <script src="js/sessionManager.js"></script>
+</body>
+</html>
