@@ -34,6 +34,7 @@
               <th class="text-nowrap">Horário</th>
               <th class="text-nowrap">Assentos Disponíveis</th>
               <th class="text-nowrap">Capacidade Máxima</th>
+              <th class="text-nowrap">Status</th>
               <th class="col-acao text-nowrap" style="display: none;">Ações</th>
             </tr>
           </thead>
@@ -44,59 +45,57 @@
       </div>
     </div>
 
-        <form id="formCadastrar" style="display: none;" class="mt-5">
-            <h2>Cadastrar Sessão</h2>
-            <div class="form-group">
-                <label for="id_filme">Filme:</label>
-                <select id="id_filme" name="id_filme" class="form-control" required>
-                    <option value="">Selecione um filme</option>
-                    <!-- INFOS EXIBIDAS -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="horario">Horário:</label>
-                <input type="datetime-local" id="horario" name="horario" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="quantidade_maxima_ingressos">Quantidade Máxima de Ingressos:</label>
-                <input type="number" id="quantidade_maxima_ingressos" name="quantidade_maxima_ingressos" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-success">Cadastrar</button>
-            <button type="button" id="btnCancelarCadastro" class="btn btn-secondary">Cancelar</button>
-        </form>
+    <form id="formCadastrar" style="display: none;" class="mt-5">
+      <h2>Cadastrar Sessão</h2>
+      <div class="form-group">
+        <label for="id_filme">Filme:</label>
+        <select id="id_filme" name="id_filme" class="form-control" required>
+          <option value="">Selecione um filme</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="horario">Horário:</label>
+        <input type="datetime-local" id="horario" name="horario" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="quantidade_maxima_ingressos">Quantidade Máxima de Ingressos:</label>
+        <input type="number" id="quantidade_maxima_ingressos" name="quantidade_maxima_ingressos" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-success">Cadastrar</button>
+      <button type="button" id="btnCancelarCadastro" class="btn btn-secondary">Cancelar</button>
+    </form>
 
-        <form id="formEditarSessao" style="display: none;" class="mt-5">
-            <h2>Editar Sessão</h2>
-            <p>ID da Sessão: <span id="editId"></span></p>
-            <div class="form-group">
-                <label for="editFilme">Filme:</label>
-                <select id="editFilme" name="id_filme" class="form-control" required>
-                    <option value="">Selecione um filme</option>
-                    <!-- INFOS EXIBIDAS -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="editHorario">Horário:</label>
-                <input type="datetime-local" id="editHorario" name="horario" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="editIngressosDisponiveis">Ingressos Disponíveis:</label>
-                <input type="number" id="editIngressosDisponiveis" name="ingressos_disponiveis" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="editQuantidadeMaxima">Quantidade Máxima de Ingressos:</label>
-                <input type="number" id="editQuantidadeMaxima" name="quantidade_maxima_ingressos" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-success">Salvar Alterações</button>
-            <button type="button" id="btnCancelarEdicao" class="btn btn-secondary">Cancelar</button>
-        </form>
-    </main>
+    <form id="formEditarSessao" style="display: none;" class="mt-5">
+      <h2>Editar Sessão</h2>
+      <p>ID da Sessão: <span id="editId"></span></p>
+      <div class="form-group">
+        <label for="editFilme">Filme:</label>
+        <select id="editFilme" name="id_filme" class="form-control" required>
+          <option value="">Selecione um filme</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editHorario">Horário:</label>
+        <input type="datetime-local" id="editHorario" name="horario" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editIngressosDisponiveis">Ingressos Disponíveis:</label>
+        <input type="number" id="editIngressosDisponiveis" name="ingressos_disponiveis" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editQuantidadeMaxima">Quantidade Máxima de Ingressos:</label>
+        <input type="number" id="editQuantidadeMaxima" name="quantidade_maxima_ingressos" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-success">Salvar Alterações</button>
+      <button type="button" id="btnCancelarEdicao" class="btn btn-secondary">Cancelar</button>
+    </form>
+  </main>
 
-    <footer id="footer">
-        <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
-    </footer>
+  <footer id="footer">
+    <p>Cine Chandon: a ferramenta de fácil usabilidade para administração de bilheterias de cinema!</p>
+  </footer>
 
-    <script src="js/sessionManager.js"></script>
-    <script src="js/scriptSessoes.js"></script>
+  <script src="js/sessionManager.js"></script>
+  <script src="js/scriptSessoes.js"></script>
 </body>
 </html>

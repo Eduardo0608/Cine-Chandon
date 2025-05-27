@@ -95,6 +95,8 @@ async function listarCompras() {
         <td>${c.nome_sessao}</td>
         <td>${new Date(c.horario).toLocaleString("pt-BR")}</td>
         <td>${c.quantidade_ingressos}</td>
+        <td>${c.tipo_ingresso}</td>
+        <td>R$ ${parseFloat(c.valor_total).toFixed(2)}</td>
         <td>${new Date(c.data_compra).toLocaleString("pt-BR")}</td>
         ${show ? `
           <td class="col-acao-compra">
@@ -149,6 +151,7 @@ async function carregarFormularioEdicao(id) {
   popularHorarios("editIdSessao", "editHorarioSelect", c.id_sessao);
 
   document.getElementById("editQuantidadeIngressos").value = c.quantidade_ingressos;
+  document.getElementById("editTipoIngresso").value = c.tipo_ingresso;
 }
 
 
@@ -157,7 +160,6 @@ document.getElementById("formEditarCompra").addEventListener("submit", async e =
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
 
-  // Converte "null" ou string vazia para valor nulo real
   if (data.id_conta === "null" || data.id_conta === "") data.id_conta = null;
 
   try {
@@ -173,6 +175,7 @@ document.getElementById("formEditarCompra").addEventListener("submit", async e =
     Swal.fire("Erro", "Não foi possível atualizar a compra.", "error");
   }
 });
+
 
 
 document.getElementById("btnCancelarEdicao").addEventListener("click", listarCompras);
@@ -219,15 +222,12 @@ document.getElementById("formCadastrar").addEventListener("submit", async e => {
       body: JSON.stringify(data),
     });
 
-    // sempre parseie o JSON de resposta
     const result = await response.json();
 
-    // trate tanto o status HTTP quanto o campo valid do JSON
     if (!response.ok || !result.valid) {
       throw new Error(result.message || "Não foi possível cadastrar a compra");
     }
 
-    // sucesso real
     Swal.fire("Sucesso", result.message, "success");
     listarCompras();
   } catch (err) {
@@ -235,6 +235,7 @@ document.getElementById("formCadastrar").addEventListener("submit", async e => {
     Swal.fire("Erro ao cadastrar compra", err.message, "error");
   }
 });
+
 
 
 

@@ -26,21 +26,33 @@ class Sessao
         }
     }
 
-    public static function listar() {
-        try {
-            $conexao = Conexao::getConexao();
-            $sql = $conexao->prepare("
-                SELECT s.id_sessao, s.id_filme, f.titulo AS nome_filme, s.horario, 
-                       s.ingressos_disponiveis, s.quantidade_maxima_ingressos
-                FROM sessao s
-                INNER JOIN filme f ON s.id_filme = f.id_filme
-            ");
-            $sql->execute();
-            return $sql->fetchAll();
-        } catch (Exception $e) {
-            output(500, ["msg" => $e->getMessage()]);
-        }
+    public static function listar($somenteAtivas = false) {
+    try {
+        $conexao = Conexao::getConexao();
+        $sql = $conexao->prepare("
+    SELECT s.id_sessao, s.id_filme, f.titulo AS nome_filme, f.imagem_url,
+           s.horario, s.ingressos_disponiveis, s.quantidade_maxima_ingressos, s.ativa
+    FROM sessao s
+    INNER JOIN filme f ON s.id_filme = f.id_filme
+    " . ($somenteAtivas ? "WHERE s.ativa = 1" : "")
+);
+        $sql->execute();
+        return $sql->fetchAll();
+    } catch (Exception $e) {
+        output(500, ["msg" => $e->getMessage()]);
     }
+}
+
+public static function alterarStatus($id, $ativa) {
+    try {
+        $conexao = Conexao::getConexao();
+        $sql = $conexao->prepare("UPDATE sessao SET ativa = ? WHERE id_sessao = ?");
+        $sql->execute([(int)$ativa, $id]);
+        return true;
+    } catch (Exception $e) {
+        output(500, ["msg" => $e->getMessage()]);
+    }
+}
     
 
     public static function insert($id_filme, $horario, $quantidade_maxima_ingressos) {

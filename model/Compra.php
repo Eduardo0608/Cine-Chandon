@@ -8,7 +8,8 @@ class Compra
         try {
             $conexao = Conexao::getConexao();
             $sql = $conexao->prepare("
-                SELECT c.id_compra, c.id_conta, c.id_sessao, c.quantidade_ingressos, c.data_compra,
+                SELECT c.id_compra, c.id_conta, c.id_sessao, c.quantidade_ingressos, c.data_compra, 
+                       c.valor_total, c.tipo_ingresso,
                        s.horario, s.id_filme, co.nome AS nome_conta, f.titulo AS nome_sessao
                 FROM compra c
                 LEFT JOIN conta co ON c.id_conta = co.id_conta
@@ -38,7 +39,8 @@ class Compra
         try {
             $conexao = Conexao::getConexao();
             $sql = $conexao->prepare("
-                SELECT c.id_compra, c.id_conta, s.horario, c.id_sessao, c.quantidade_ingressos, c.data_compra, 
+                SELECT c.id_compra, c.id_conta, s.horario, c.id_sessao, 
+                       c.quantidade_ingressos, c.data_compra, c.valor_total, c.tipo_ingresso,
                        COALESCE(co.nome, 'Conta removida') AS nome_conta, 
                        f.titulo AS nome_sessao
                 FROM compra c
@@ -53,16 +55,17 @@ class Compra
         }
     }
 
-    public static function insert($id_conta, $id_sessao, $quantidade_ingressos) {
+    public static function insert($id_conta, $id_sessao, $quantidade_ingressos, $tipo_ingresso) {
         try {
-            if (!validarId($id_conta) || !validarId($id_sessao) || !validarQuantidadeIngressos($quantidade_ingressos)) {
+            if (!validarId($id_conta) || !validarId($id_sessao) || 
+                !validarQuantidadeIngressos($quantidade_ingressos) || 
+                !in_array($tipo_ingresso, ['Inteira', 'Meia'])) {
                 throw new Exception("Dados inválidos", 400);
             }
 
             $conexao = Conexao::getConexao();
-            // executa a procedure que já trata transação internamente
-            $sql = $conexao->prepare("CALL RealizarCompra(?, ?, ?)");
-            $sql->execute([$id_conta, $id_sessao, $quantidade_ingressos]);
+            $sql = $conexao->prepare("CALL RealizarCompra(?, ?, ?, ?)");
+            $sql->execute([$id_conta, $id_sessao, $quantidade_ingressos, $tipo_ingresso]);
 
             return true;
         } catch (Exception $e) {
@@ -70,7 +73,7 @@ class Compra
         }
     }
 
-    public static function update($id, $id_conta, $id_sessao, $quantidade_ingressos) {
+    public static function update($id, $id_conta, $id_sessao, $quantidade_ingressos, $tipo_ingresso) {
         try {
             if (!self::exist($id)) {
                 throw new Exception("Compra não encontrada", 404);
@@ -84,49 +87,22 @@ class Compra
             if (!validarQuantidadeIngressos($quantidade_ingressos)) {
                 throw new Exception("Quantidade de ingressos inválida", 400);
             }
+            if (!in_array($tipo_ingresso, ['Inteira', 'Meia'])) {
+                throw new Exception("Tipo de ingresso inválido", 400);
+            }
 
             $conexao = Conexao::getConexao();
-            $conexao->beginTransaction();
 
-            // Recupera dados da compra anterior
-            $sql = $conexao->prepare("SELECT id_sessao, quantidade_ingressos FROM compra WHERE id_compra = ?");
-            $sql->execute([$id]);
-            $compraAnterior = $sql->fetch(PDO::FETCH_ASSOC);
-            if (!$compraAnterior) {
-                throw new Exception("Compra original não encontrada", 404);
-            }
+            // Atualiza quantidade e valor via procedure
+            $sql = $conexao->prepare("CALL AtualizarCompra(?, ?, ?)");
+            $sql->execute([$id, $quantidade_ingressos, $tipo_ingresso]);
 
-            $sessaoAntiga = $compraAnterior['id_sessao'];
-            $quantAnterior = $compraAnterior['quantidade_ingressos'];
+            // Atualiza conta e sessão separadamente
+            $sql = $conexao->prepare("UPDATE compra SET id_conta = ?, id_sessao = ? WHERE id_compra = ?");
+            $sql->execute([$id_conta, $id_sessao, $id]);
 
-            // Reembolsa ingressos na sessão antiga
-            $sql = $conexao->prepare("UPDATE sessao SET ingressos_disponiveis = ingressos_disponiveis + ? WHERE id_sessao = ?");
-            $sql->execute([$quantAnterior, $sessaoAntiga]);
-
-            // Verifica disponibilidade na nova sessão
-            $sql = $conexao->prepare("SELECT ingressos_disponiveis FROM sessao WHERE id_sessao = ?");
-            $sql->execute([$id_sessao]);
-            $sessao = $sql->fetch(PDO::FETCH_ASSOC);
-            if (!$sessao) {
-                throw new Exception("Sessão não encontrada", 404);
-            }
-            if ($sessao['ingressos_disponiveis'] < $quantidade_ingressos) {
-                throw new Exception("Ingressos insuficientes para completar a alteração da compra", 400);
-            }
-
-            // Debita ingressos da nova sessão e atualiza a compra
-            $sql = $conexao->prepare("UPDATE sessao SET ingressos_disponiveis = ingressos_disponiveis - ? WHERE id_sessao = ?");
-            $sql->execute([$quantidade_ingressos, $id_sessao]);
-
-            $sql = $conexao->prepare("UPDATE compra SET id_conta = ?, id_sessao = ?, quantidade_ingressos = ? WHERE id_compra = ?");
-            $sql->execute([$id_conta, $id_sessao, $quantidade_ingressos, $id]);
-
-            $conexao->commit();
             return true;
         } catch (Exception $e) {
-            if ($conexao->inTransaction()) {
-                $conexao->rollBack();
-            }
             output(500, ["msg" => $e->getMessage()]);
         }
     }

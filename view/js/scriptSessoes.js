@@ -34,13 +34,13 @@ async function listarSessoes() {
     const tbody = listaSessoes.querySelector("tbody");
     tbody.innerHTML = "";
 
-    try {
-        const resultado = await fetch(`${base}/sessao.php`);
-        const json     = await resultado.json();
-        sessoes  = json.data;
+    const user = JSON.parse(localStorage.getItem("user"));
+    const isLoggedIn = Boolean(user);
 
-        const user = JSON.parse(localStorage.getItem("user"));
-        const isLoggedIn = Boolean(user);
+    try {
+        const resultado = await fetch(`${base}/sessao.php${isLoggedIn ? '?admin=1' : ''}`);
+        const json = await resultado.json();
+        sessoes = json.data;
 
         document.querySelectorAll("th.col-acao").forEach(th => {
             th.style.display = isLoggedIn ? "table-cell" : "none";
@@ -56,16 +56,23 @@ async function listarSessoes() {
                 minute: "2-digit"
             });
 
+            const statusBotao = `<button class="btn btn-sm ${sessao.ativa ? 'btn-secondary' : 'btn-success'} btnToggleAtiva" 
+                data-id="${sessao.id_sessao}" 
+                data-ativa="${sessao.ativa}">
+                ${sessao.ativa ? 'Desativar' : 'Ativar'}
+            </button>`;
+
             const acoes = isLoggedIn
-              ? `<td class="col-acao">
-                    <button class="btn btn-warning btn-sm btnEditarSessao" data-id="${sessao.id_sessao}">
-                        Editar
-                    </button>
-                    <button class="btn btn-danger btn-sm btnExcluirSessao" data-id="${sessao.id_sessao}">
-                        Excluir
-                    </button>
-                </td>`
-              : "";
+                ? `<td class="col-acao">
+                        ${statusBotao}
+                        <button class="btn btn-warning btn-sm btnEditarSessao" data-id="${sessao.id_sessao}">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm btnExcluirSessao" data-id="${sessao.id_sessao}">
+                            Excluir
+                        </button>
+                    </td>`
+                : "";
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -73,6 +80,11 @@ async function listarSessoes() {
                 <td>${horarioFormatado}</td>
                 <td>${sessao.ingressos_disponiveis}</td>
                 <td>${sessao.quantidade_maxima_ingressos}</td>
+                <td>
+                    ${sessao.ativa
+                        ? '<span class="badge badge-success">Ativa</span>'
+                        : '<span class="badge badge-secondary">Inativa</span>'}
+                </td>
                 ${acoes}
             `;
             tbody.appendChild(tr);
@@ -89,6 +101,26 @@ async function listarSessoes() {
                     carregarFormularioEdicao(button.getAttribute('data-id'));
                 });
             });
+            document.querySelectorAll('.btnToggleAtiva').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const id = button.getAttribute('data-id');
+                    const ativa = button.getAttribute('data-ativa') === "1" ? 0 : 1;
+
+                    try {
+                        const res = await fetch(`${base}/sessao.php`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id_sessao: id, ativa })
+                        });
+                        const result = await res.json();
+                        if (result.valid) listarSessoes();
+                        else Swal.fire("Erro", result.message, "error");
+                    } catch (e) {
+                        console.error(e);
+                        Swal.fire("Erro", "Erro ao atualizar status!", "error");
+                    }
+                });
+            });
         }
 
     } catch (error) {
@@ -96,6 +128,7 @@ async function listarSessoes() {
         Swal.fire("Erro", "Não foi possível carregar as sessões!", "error");
     }
 }
+
 
 async function carregarFormularioEdicao(idSessao) {
     try {

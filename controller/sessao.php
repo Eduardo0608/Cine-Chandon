@@ -19,7 +19,7 @@ if (method("GET")) {
             }
             respostaJson(['valid' => true, 'data' => $sessao], 200);
         } else {
-            $sessoes = Sessao::listar();
+            $sessoes = Sessao::listar(!isset($_GET["admin"]));
             respostaJson(['valid' => true, 'data' => $sessoes], 200);
         }
     } catch (Exception $e) {
@@ -45,12 +45,16 @@ if (method("POST")) {
 
 if (method("PUT")) {
     try {
-        // agora exigimos ingressos_disponiveis e quantidade_maxima_ingressos
+        if (isset($data["id_sessao"], $data["ativa"])) {
+            Sessao::alterarStatus($data["id_sessao"], $data["ativa"]);
+            respostaJson(['valid' => true, 'message' => "Status atualizado com sucesso"], 200);
+            exit;
+        }
+
         if (!valid($data, ["id_sessao", "id_filme", "horario", "ingressos_disponiveis", "quantidade_maxima_ingressos"])) {
             throw new Exception("Dados da sessão não enviados corretamente", 400);
         }
 
-        // validações iniciais
         $idSessao = $data["id_sessao"];
         $idFilme = $data["id_filme"];
         $horario = $data["horario"];
@@ -73,7 +77,6 @@ if (method("PUT")) {
             throw new Exception("Ingressos disponíveis não podem exceder a capacidade máxima", 400);
         }
 
-        // atualiza diretamente, sem usar procedure
         $res = Sessao::update(
             $idSessao,
             $idFilme,
@@ -89,7 +92,6 @@ if (method("PUT")) {
         respostaJson(['valid' => false, 'message' => $e->getMessage()], $e->getCode());
     }
 }
-
 
 if (method("DELETE")) {
     try {

@@ -34,6 +34,11 @@
             </p>
         </div>
 
+        <!-- Campo de busca -->
+        <div class="form-group text-center mb-4">
+            <input type="text" id="inputBuscaSessao" class="form-control w-50 mx-auto" placeholder="Buscar por nome do filme ou horário...">
+        </div>
+
         <!-- onde os cards das sessões vão aparecer -->
         <div class="row" id="movies-container">
             <!-- cards gerados por JS -->
@@ -46,9 +51,9 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- controle de sessão de usuário (já existente) -->
+    <!-- controle de sessão de usuário -->
     <script src="js/sessionManager.js"></script>
-    <!-- nosso script de listagem e redirecionamento -->
+    <!-- nosso script de listagem e busca -->
     <script src="js/scriptHome.js"></script>
 </body>
 </html>

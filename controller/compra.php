@@ -29,14 +29,21 @@ if (method("GET")) {
 
 if (method("POST")) {
     try {
-        if (!valid($data, ["id_conta", "id_sessao", "quantidade_ingressos"])) {
+        if (!valid($data, ["id_conta", "id_sessao", "quantidade_ingressos", "tipo_ingresso"])) {
             throw new Exception("Dados da compra não enviados corretamente", 400);
         }
 
-        $res = Compra::insert($data["id_conta"], $data["id_sessao"], $data["quantidade_ingressos"]);
+        $res = Compra::insert(
+            $data["id_conta"],
+            $data["id_sessao"],
+            $data["quantidade_ingressos"],
+            $data["tipo_ingresso"]
+        );
+
         if (!$res) {
             throw new Exception("Falha ao cadastrar a compra", 500);
         }
+
         respostaJson(['valid' => true, 'message' => "Compra criada com sucesso"], 201);
     } catch (Exception $e) {
         respostaJson(['valid' => false, 'message' => $e->getMessage()], $e->getCode());
@@ -45,7 +52,7 @@ if (method("POST")) {
 
 if (method("PUT")) {
     try {
-        if (!valid($data, ["id_compra", "id_sessao", "quantidade_ingressos"])) {
+        if (!valid($data, ["id_compra", "id_sessao", "quantidade_ingressos", "tipo_ingresso"])) {
             throw new Exception("Dados da compra não enviados corretamente", 400);
         }
 
@@ -53,16 +60,23 @@ if (method("PUT")) {
             ? $data["id_conta"]
             : null;
 
-        $res = Compra::update($data["id_compra"], $idConta, $data["id_sessao"], $data["quantidade_ingressos"]);
+        $res = Compra::update(
+            $data["id_compra"],
+            $idConta,
+            $data["id_sessao"],
+            $data["quantidade_ingressos"],
+            $data["tipo_ingresso"]
+        );
+
         if (!$res) {
             throw new Exception("Não foi possível atualizar a compra", 500);
         }
+
         respostaJson(['valid' => true, 'message' => "Compra atualizada com sucesso"], 200);
     } catch (Exception $e) {
         respostaJson(['valid' => false, 'message' => $e->getMessage()], $e->getCode());
     }
 }
-
 
 if (method("DELETE")) {
     try {
@@ -74,6 +88,7 @@ if (method("DELETE")) {
         if (!$res) {
             throw new Exception("Não foi possível excluir a compra", 500);
         }
+
         respostaJson(['valid' => true, 'message' => "Compra excluída com sucesso"], 200);
     } catch (Exception $e) {
         respostaJson(['valid' => false, 'message' => $e->getMessage()], $e->getCode());
