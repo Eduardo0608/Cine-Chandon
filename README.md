@@ -130,6 +130,8 @@ CREATE TABLE compra (
     FOREIGN KEY (id_sessao) REFERENCES sessao(id_sessao) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+ALTER TABLE compra ADD COLUMN valor_total DECIMAL(10, 2) NOT NULL DEFAULT 0.00;
+
 -- Inserindo dados na tabela filme
 INSERT INTO filme (titulo, duracao, sinopse, data_lancamento) VALUES
 ('Vingadores: Ultimato', 181, 'Os Vingadores enfrentam Thanos.', '2019-04-26'),
@@ -181,6 +183,7 @@ INSERT INTO sessao (id_filme, horario, quantidade_maxima_ingressos) VALUES
 
 ALTER TABLE sessao ADD COLUMN ingressos_disponiveis INT NOT NULL;
 
+-- Atualizando as sessões existentes para que ingressos_disponiveis seja igual a quantidade_maxima_ingressos
 UPDATE sessao SET ingressos_disponiveis = 48
 WHERE id_filme = 1;
 UPDATE sessao SET ingressos_disponiveis = 44
@@ -204,8 +207,8 @@ WHERE id_filme = 10;
 
 -- Inserindo dados na tabela conta
 INSERT INTO conta (nome, email, senha, cpf, data_nascimento) VALUES
-('João Silva',      'joao.silva@gmail.com',      '$2y$10$SoXEqMvda/A1pVyQHqXvQO42ICSBsXjq.BGz6fAz8Gm89NxXlJ93S', '529.982.247-25', '1990-01-15'),
-('Maria Souza',     'maria.souza@gmail.com',     '$2y$10$A1eYpMvxa/91XzQvRvYpAQ42JDNTAXkp.CDZ6uAl2Em67AxToK32D', '762.807.785-73', '1985-07-23');
+('João Silva', 'joao.silva@gmail.com', '$2y$10$SoXEqMvda/A1pVyQHqXvQO42ICSBsXjq.BGz6fAz8Gm89NxXlJ93S', '529.982.247-25', '1990-01-15'),
+('Maria Souza', 'maria.souza@gmail.com', '$2y$10$A1eYpMvxa/91XzQvRvYpAQ42JDNTAXkp.CDZ6uAl2Em67AxToK32D', '762.807.785-73', '1985-07-23');
 
 -- Inserindo dados na tabela compra
 INSERT INTO compra (id_conta, id_sessao, quantidade_ingressos) VALUES
@@ -247,20 +250,26 @@ BEGIN
     DECLARE genero_count INT;
     DECLARE filme_id INT;
 
+    -- Iniciando a transação
     START TRANSACTION;
 
+    -- Inserindo o filme
     INSERT INTO filme (titulo, duracao, sinopse, data_lancamento)
     VALUES (titulo, duracao, sinopse, data_lancamento);
 
+    -- Pegando o id do filme recém inserido
     SET filme_id = LAST_INSERT_ID();
 
+    -- Contando o número de gêneros no JSON
     SET genero_count = JSON_LENGTH(generos);
 
+    -- Validação: impedir cadastro sem nenhum gênero
     IF genero_count = 0 THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Pelo menos um gênero deve ser informado para cadastrar o filme';
     END IF;
 
+    -- Loop para associar gêneros
     WHILE i < genero_count DO
         SET genero_id = JSON_UNQUOTE(JSON_EXTRACT(generos, CONCAT('$[', i, ']')));
 
@@ -303,6 +312,7 @@ BEGIN
 
     SET genero_count = JSON_LENGTH(generos);
 
+    -- Validação: impedir atualização sem nenhum gênero
     IF genero_count = 0 THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Pelo menos um gênero deve ser informado para atualizar o filme';
@@ -326,26 +336,36 @@ DELIMITER ;
 DELIMITER //
 CREATE OR REPLACE PROCEDURE ExcluirFilme(IN filme_id INT)
 BEGIN
-
+    -- Iniciando a transação
     START TRANSACTION;
 
+    -- Excluindo o filme
     DELETE FROM filme WHERE id_filme = filme_id;
 
+    -- Excluindo as associações do filme com seus gêneros
     DELETE FROM filme_genero WHERE id_filme = filme_id;
 
+    -- Commit da transação
     COMMIT;
 END//
 DELIMITER ;
 
 -- Procedure que realiza a compra e faz a atualização dos ingressos disponíveis na sessão
+
 DELIMITER //
 CREATE OR REPLACE PROCEDURE RealizarCompra(
     IN conta_id INT,
     IN sessao_id INT,
-    IN quantidade_ingressos INT
+    IN quantidade_ingressos INT,
+    IN tipo_ingresso ENUM('Inteira', 'Meia')
 )
 BEGIN
     DECLARE ingressos_restantes INT;
+    DECLARE valor_unitario DECIMAL(10,2);
+    DECLARE valor_total DECIMAL(10,2);
+
+    SET valor_unitario = IF(tipo_ingresso = 'Meia', 10.00, 20.00);
+    SET valor_total = quantidade_ingressos * valor_unitario;
 
     START TRANSACTION;
 
@@ -358,8 +378,8 @@ BEGIN
         SET ingressos_disponiveis = ingressos_disponiveis - quantidade_ingressos
         WHERE id_sessao = sessao_id;
 
-        INSERT INTO compra (id_conta, id_sessao, quantidade_ingressos)
-        VALUES (conta_id, sessao_id, quantidade_ingressos);
+        INSERT INTO compra (id_conta, id_sessao, quantidade_ingressos, valor_total, tipo_ingresso)
+        VALUES (conta_id, sessao_id, quantidade_ingressos, valor_total, tipo_ingresso);
 
         COMMIT;
     ELSE
@@ -373,13 +393,19 @@ DELIMITER ;
 DELIMITER //
 CREATE OR REPLACE PROCEDURE AtualizarCompra(
     IN compra_id INT,
-    IN nova_quantidade_ingressos INT
+    IN nova_quantidade_ingressos INT,
+    IN novo_tipo_ingresso ENUM('Inteira', 'Meia')
 )
 BEGIN
     DECLARE quantidade_atual INT;
     DECLARE quantidade_diferenca INT;
     DECLARE ingressos_restantes INT;
     DECLARE sessao_id INT;
+    DECLARE valor_unitario DECIMAL(10,2);
+    DECLARE novo_valor_total DECIMAL(10,2);
+
+    SET valor_unitario = IF(novo_tipo_ingresso = 'Meia', 10.00, 20.00);
+    SET novo_valor_total = nova_quantidade_ingressos * valor_unitario;
 
     START TRANSACTION;
 
@@ -391,7 +417,7 @@ BEGIN
     FROM sessao
     WHERE id_sessao = sessao_id;
 
-    IF nova_quantidade_ingressos > ingressos_restantes THEN
+    IF nova_quantidade_ingressos > ingressos_restantes + quantidade_atual THEN
         ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ingressos insuficientes para completar a alteração da compra';
     ELSE
@@ -402,12 +428,13 @@ BEGIN
         WHERE id_sessao = sessao_id;
 
         UPDATE compra
-        SET quantidade_ingressos = nova_quantidade_ingressos
+        SET quantidade_ingressos = nova_quantidade_ingressos,
+            tipo_ingresso = novo_tipo_ingresso,
+            valor_total = novo_valor_total
         WHERE id_compra = compra_id;
 
         COMMIT;
     END IF;
-
 END//
 DELIMITER ;
 
@@ -418,11 +445,14 @@ CREATE OR REPLACE PROCEDURE CriarSessao(
     IN nova_quantidade_maxima_ingressos INT
 )
 BEGIN
+    -- Início da transação
     START TRANSACTION;
 
+    -- Inserir a nova sessão
     INSERT INTO sessao (id_sessao, quantidade_maxima_ingressos, ingressos_disponiveis)
     VALUES (nova_sessao_id, nova_quantidade_maxima_ingressos, nova_quantidade_maxima_ingressos);
 
+    -- Commit da transação
     COMMIT;
 END//
 DELIMITER ;
@@ -438,6 +468,7 @@ CREATE OR REPLACE PROCEDURE AtualizarSessao(
 BEGIN
     DECLARE ingressos_disponiveis_atual INT;
 
+    -- Verifica o valor atual para garantir integridade
     SELECT ingressos_disponiveis INTO ingressos_disponiveis_atual
     FROM sessao
     WHERE id_sessao = p_id_sessao;
@@ -461,18 +492,42 @@ CREATE OR REPLACE PROCEDURE ExcluirGenero(IN p_id_genero INT)
 BEGIN
     DECLARE genero_em_uso INT;
 
+    -- Verifica se há vínculos com filmes
     SELECT COUNT(*) INTO genero_em_uso
     FROM filme_genero
     WHERE id_genero = p_id_genero;
 
+    -- Se houver vínculos, lança erro controlado
     IF genero_em_uso > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Este gênero está associado a um ou mais filmes e não pode ser excluído.';
     END IF;
 
+    -- Se não houver, pode excluir normalmente
     DELETE FROM genero WHERE id_genero = p_id_genero;
 END//
 DELIMITER ;
+
+UPDATE compra
+SET valor_total = quantidade_ingressos * 20.00
+WHERE valor_total = 0.00;
+
+ALTER TABLE compra ADD COLUMN tipo_ingresso ENUM('Inteira', 'Meia') NOT NULL DEFAULT 'Inteira';
+
+ALTER TABLE sessao ADD COLUMN ativa BOOLEAN NOT NULL DEFAULT TRUE;
+
+ALTER TABLE filme ADD COLUMN imagem_url VARCHAR(255);
+
+UPDATE filme SET imagem_url = 'assets/images/vingadores.jpg' WHERE titulo = 'Vingadores: Ultimato';
+UPDATE filme SET imagem_url = 'assets/images/o-rei-leao.jpg' WHERE titulo = 'O Rei Leão';
+UPDATE filme SET imagem_url = 'assets/images/titanic.jpg' WHERE titulo = 'Titanic';
+UPDATE filme SET imagem_url = 'assets/images/corra.jpg' WHERE titulo = 'Corra!';
+UPDATE filme SET imagem_url = 'assets/images/star-wars.jpg' WHERE titulo = 'Star Wars: Episódio IV';
+UPDATE filme SET imagem_url = 'assets/images/matrix.jpg' WHERE titulo = 'Matrix';
+UPDATE filme SET imagem_url = 'assets/images/orgulho-e-preconceito.jpg' WHERE titulo = 'Orgulho e Preconceito';
+UPDATE filme SET imagem_url = 'assets/images/senhor-dos-aneis.jpg' WHERE titulo = 'O Senhor dos Anéis: A Sociedade do Anel';
+UPDATE filme SET imagem_url = 'assets/images/o-silencio-dos-inocentes.jpg' WHERE titulo = 'O Silêncio dos Inocentes';
+UPDATE filme SET imagem_url = 'assets/images/la-la-land.jpg' WHERE titulo = 'La La Land';
 ```
 3. Verifique em `webservice/configs/Database.php` se as credenciais (host, usuário, senha) correspondem ao seu XAMPP:
 
